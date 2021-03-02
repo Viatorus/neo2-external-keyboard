@@ -1,0 +1,5 @@
+Supports the Neo2-Layout when using a physical keyboard.
+
+Provides a Neo2 keyboard layout and a Neo2 keyboard input method.
+
+https://neo-layout.org/

@@ -1,0 +1,1 @@
+Supports the Neo2-Layout when using a physical keyboard.
