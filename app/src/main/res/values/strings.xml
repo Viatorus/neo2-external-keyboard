@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Neo2 External Keyboard</string>
+    <string name="keyboard_layouts_label">Neo2 layout</string>
+    <string name="keyboard_layout_neo2_label">Neo2</string>
+</resources>
