@@ -21,7 +21,7 @@ public class Neo2InputMethodService extends InputMethodService {
     private static final int Mod4_1 = KeyEvent.KEYCODE_SLASH;
     private static final int Mod4_2 = KeyEvent.KEYCODE_ALT_RIGHT;
 
-    private static final Map<Integer, Integer> textActions = new HashMap<Integer, Integer>() {{
+    private static final Map<Intger, Integer> textActions = new HashMap<Integer, Integer>() {{
         // Row 1
         put(KeyEvent.KEYCODE_8, KeyEvent.KEYCODE_TAB);
         // Row 2
