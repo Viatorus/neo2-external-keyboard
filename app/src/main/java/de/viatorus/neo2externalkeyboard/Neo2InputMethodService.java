@@ -44,12 +44,14 @@ public class Neo2InputMethodService extends InputMethodService {
         put(KeyEvent.KEYCODE_Z, KeyEvent.KEYCODE_BACK);
     }};
 
-    private int shift_only = 0;
+    private int mod2_only = 0;
     private boolean mod2_locked = false;
     private boolean mod2_1 = false;
     private boolean mod2_2 = false;
     private boolean mod3_1 = false;
     private boolean mod3_2 = false;
+    private int mod4_only = 0;
+    private boolean mod4_locked = false;
     private boolean mod4_1 = false;
     private boolean mod4_2 = false;
 
@@ -79,7 +81,7 @@ public class Neo2InputMethodService extends InputMethodService {
         if ((mod3_1 || mod3_2)) {
             state |= KeyEvent.META_CAPS_LOCK_ON;
         }
-        if (mod4_1 || mod4_2) {
+        if ((mod4_1 || mod4_2) ^ mod4_locked) {
             state |= KeyEvent.META_ALT_RIGHT_ON;
         }
 
@@ -112,30 +114,30 @@ public class Neo2InputMethodService extends InputMethodService {
     private boolean checkForMod2(final int keyCode, final boolean down) {
         if (keyCode == Mod2_1) {
             if (!mod2_1 && down) {
-                shift_only++;
+                mod2_only++;
             }
             mod2_1 = down;
             if (!down && mod2_2) {
-                shift_only++;
-            } else if (!down && shift_only == 3) {
+                mod2_only++;
+            } else if (!down && mod2_only == 3) {
                 mod2_locked = !mod2_locked;
-                shift_only = 0;
+                mod2_only = 0;
             }
             return true;
         } else if (keyCode == Mod2_2) {
             if (!mod2_2 && down) {
-                shift_only++;
+                mod2_only++;
             }
             mod2_2 = down;
             if (!down && mod2_1) {
-                shift_only++;
-            } else if (!down && shift_only == 3) {
+                mod2_only++;
+            } else if (!down && mod2_only == 3) {
                 mod2_locked = !mod2_locked;
-                shift_only = 0;
+                mod2_only = 0;
             }
             return true;
         }
-        shift_only = 0;
+        mod2_only = 0;
         return false;
     }
 
@@ -143,18 +145,39 @@ public class Neo2InputMethodService extends InputMethodService {
      * Checks and tracks Mod3 and Mod4 key events.
      */
     private boolean checkForMod3or4(final int keyCode, final boolean down) {
-        if (keyCode == Mod3_1) {
-            mod3_1 = down;
-            return true;
-        } else if (keyCode == Mod3_2) {
-            mod3_2 = down;
-            return true;
-        } else if (keyCode == Mod4_1) {
+        if (keyCode == Mod4_1) {
+            if (!mod4_1 && down) {
+                mod4_only++;
+            }
             mod4_1 = down;
+            if (!down && mod4_2) {
+                mod4_only++;
+            } else if (!down && mod4_only == 3) {
+                mod4_locked = !mod4_locked;
+                mod4_only = 0;
+            }
             return true;
         } else if (keyCode == Mod4_2) {
+            if (!mod4_2 && down) {
+                mod4_only++;
+            }
             mod4_2 = down;
+            if (!down && mod4_1) {
+                mod4_only++;
+            } else if (!down && mod4_only == 3) {
+                mod4_locked = !mod4_locked;
+                mod4_only = 0;
+            }
             return true;
+        } else {
+            mod4_only = 0;
+            if (keyCode == Mod3_1) {
+                mod3_1 = down;
+                return true;
+            } else if (keyCode == Mod3_2) {
+                mod3_2 = down;
+                return true;
+            }
         }
         return false;
     }
@@ -164,7 +187,7 @@ public class Neo2InputMethodService extends InputMethodService {
      */
     private boolean checkForTextActions(final int keyCode, KeyEvent event) {
         // Only for mod 4.
-        if ((mod4_1 || mod4_2) && !(mod3_1 || mod3_2)) {
+        if (((mod4_1 || mod4_2) ^ mod4_locked) && !(mod3_1 || mod3_2)) {
             // Try to find a matching text action.
             Integer action = textActions.get(keyCode);
             if (action != null) {
@@ -196,6 +219,7 @@ public class Neo2InputMethodService extends InputMethodService {
         //  Log.d(TAG, MessageFormat.format("Key {0} with meta state {1} {2}.", keyCode, event.getMetaState(), down ? "down" : "up"));
 
         if (checkForMod2(keyCode, down)) {
+            mod4_only = 0;
             // Only for shift key, continue propagation.
             return false;
         }
